@@ -14,6 +14,7 @@ class Application:
     mainFilePath = ""
     nameNewFile = ""
     listLocalizationsToBackup = ""
+    listCopiedFiles = []
 
     def __init__(self):
         self.window = tk.Tk()
@@ -39,7 +40,9 @@ class Application:
         if msb.askokcancel("Czy rozpoczać backup?", "Czy rozpocząć tworzenie kopii zapasowej?"):
             self.runBackup(self.listLocalizationsToBackup)
 
-        print("gotowe")
+        print("Backup gotowy")
+        newTextInfo = " Zostały skopiowane pliki:%s" % self.listCopiedFiles
+        self.displayInfo(newTextInfo)
 
 
 
@@ -52,9 +55,18 @@ class Application:
 
         if directoryName:
             print (directoryName)
-            os.mkdir(self.createDirectoryPath(directoryName))
-            if os.path.exists(directoryName):
-                print("katalog z data zapisany")
+            fullPathAndName = self.createDirectoryPath(directoryName)
+            if os.path.isdir(fullPathAndName):
+                fullPathAndNameHour = fullPathAndName+datetime.datetime.today().strftime('%H-%M-%S')
+                os.mkdir(fullPathAndNameHour)
+                self.pathDestination = fullPathAndNameHour
+                if os.path.exists(fullPathAndName):
+                    print("katalog z data i godziną zapisany")
+
+            else:
+                os.mkdir(fullPathAndName)
+                if os.path.exists(fullPathAndName):
+                    print("katalog z data zapisany")
 
     def getDateToDirectoryName(self):
         self.fileName = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -78,6 +90,7 @@ class Application:
         for src in srcBackup:
             self.createBackup(src, self.pathDestination)
             print("skopiowano %s"%src)
+            self.listCopiedFiles.append(src)
 
     def createBackup(self,src,dst):
         dir_src = src
