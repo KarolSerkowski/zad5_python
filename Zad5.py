@@ -41,8 +41,12 @@ class Application:
             self.runBackup(self.listLocalizationsToBackup)
 
         print("Backup gotowy")
-        newTextInfo = " Zostały skopiowane pliki:%s" % self.listCopiedFiles
+        newTextInfo = " Zostały skopiowane pliki:"
         self.displayInfo(newTextInfo)
+        for file in self.listCopiedFiles:
+            newTextInfo = file
+            self.displayInfo(newTextInfo)
+
 
 
 
@@ -54,19 +58,19 @@ class Application:
             directoryName = str(self.getDateToDirectoryName())
 
         if directoryName:
-            print (directoryName)
+            print ("Nazwa katalogu to %s"%directoryName)
             fullPathAndName = self.createDirectoryPath(directoryName)
             if os.path.isdir(fullPathAndName):
-                fullPathAndNameHour = fullPathAndName+datetime.datetime.today().strftime('%H-%M-%S')
-                os.mkdir(fullPathAndNameHour)
-                self.pathDestination = fullPathAndNameHour
+                fullPathAndName = fullPathAndName + datetime.datetime.today().strftime('_%H-%M-%S')
+                os.mkdir(fullPathAndName)
+                self.pathDestination = fullPathAndName
                 if os.path.exists(fullPathAndName):
-                    print("katalog z data i godziną zapisany")
+                    print("Pełna ścieżka i nazwa katalogu: %s"%fullPathAndName)
 
             else:
                 os.mkdir(fullPathAndName)
                 if os.path.exists(fullPathAndName):
-                    print("katalog z data zapisany")
+                    print("Pełna ścieżka i nazwa katalogu: %s"%fullPathAndName)
 
     def getDateToDirectoryName(self):
         self.fileName = datetime.datetime.today().strftime('%Y-%m-%d')
@@ -75,7 +79,6 @@ class Application:
     def createDirectoryPath(self, directoryName):
         path = os.path.join(self.directory, directoryName)
         self.pathDestination = path
-        print (path)
         return path
 
     def openFile(self):
@@ -89,17 +92,16 @@ class Application:
     def runBackup(self,srcBackup):
         for src in srcBackup:
             self.createBackup(src, self.pathDestination)
-            print("skopiowano %s"%src)
-            self.listCopiedFiles.append(src)
 
     def createBackup(self,src,dst):
         dir_src = src
         dir_dst = dst
 
-        for filename in os.listdir(dir_src):
-            if filename.endswith('.txt'):
-                shutil.copy(dir_src + filename, dir_dst)
-            print(filename)
+        for fileName in os.listdir(dir_src):
+            if fileName.endswith('.txt'):
+                shutil.copy(dir_src + fileName, dir_dst)
+            print("skopiowano %s" % fileName)
+            self.listCopiedFiles.append(fileName)
 
 
 
