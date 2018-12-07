@@ -36,6 +36,10 @@ class Application:
 
         if msb.askokcancel("Wybór folderu do zapisu backapu", "Wybierz folder w ktorym zostanie zapisana kopia zapasowa"):
             self.createDirectoryToBackup()
+        if msb.askokcancel("Czy rozpoczać backup?", "Czy rozpocząć tworzenie kopii zapasowej?"):
+            self.runBackup(self.listLocalizationsToBackup)
+
+        print("gotowe")
 
 
 
@@ -62,32 +66,6 @@ class Application:
         print (path)
         return path
 
-    def createNewFileAfterTestContentTxt(self,path):
-        numberOfLines = len(open(path).readlines())
-
-        if numberOfLines == 0:
-            self.nameNewFile = "puste"
-            self.updateFileTxt(self.nameNewFile)
-            return  self.nameNewFile
-        elif numberOfLines == 1:
-            self.nameNewFile = "krótkie"
-            self.updateFileTxt(self.nameNewFile)
-            return  self.nameNewFile
-        elif numberOfLines <=10:
-            self.nameNewFile = "średnie"
-            self.updateFileTxt(self.nameNewFile)
-            return  self.nameNewFile
-        elif numberOfLines >10:
-            self.nameNewFile = "długie"
-            self.updateFileTxt(self.nameNewFile)
-            return  self.nameNewFile
-
-    def updateFileTxt(self,fileName):
-        newFiles = open(self.createDirectoryPath(fileName), "a+")
-        newFiles.write(self.mainFilePath + '\n')
-        print("plik dopisany")
-        newFiles.close()
-
     def openFile(self):
         filename = fd.askopenfilename(filetypes=[("Plik tekstowy","*.txt")]) # wywołanie okna dialogowego open file
         if filename:
@@ -95,6 +73,11 @@ class Application:
             contetnReadFiles= readFiles.readlines()
             readFiles.close()
         return  contetnReadFiles
+
+    def runBackup(self,srcBackup):
+        for src in srcBackup:
+            self.createBackup(src, self.pathDestination)
+            print("skopiowano %s"%src)
 
     def createBackup(self,src,dst):
         dir_src = src
