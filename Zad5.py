@@ -61,7 +61,7 @@ class Application:
             print ("Nazwa katalogu to %s"%directoryName)
             fullPathAndName = self.createDirectoryPath(directoryName)
             if os.path.isdir(fullPathAndName):
-                fullPathAndName = fullPathAndName + datetime.datetime.today().strftime('_%H-%M-%S')
+                fullPathAndName = fullPathAndName + datetime.datetime.today().strftime("_%H-%M-%S")
                 os.mkdir(fullPathAndName)
                 self.pathDestination = fullPathAndName
                 if os.path.exists(fullPathAndName):
@@ -93,12 +93,21 @@ class Application:
         for src in srcBackup:
             self.createBackup(src, self.pathDestination)
 
+    def walidacjaSciezki(self,path):
+        newPath = path.replace('\n', '')
+        newPath = newPath.replace("/[/]+", "/")
+        newPath = newPath.replace("\[\]+", "\\")
+        if (newPath[len(newPath)-1]!="\\" or newPath[len(newPath)-1]!="/"):
+            newPath = newPath+"/"
+
+        return newPath
+
     def createBackup(self,src,dst):
-        dir_src = src
-        dir_dst = dst
+        dir_src = self.walidacjaSciezki(src)
+        dir_dst = self.walidacjaSciezki(dst)
 
         for fileName in os.listdir(dir_src):
-            if fileName.endswith('.txt'):
+            if fileName.endswith(".txt"):
                 shutil.copy(dir_src + fileName, dir_dst)
             print("skopiowano %s" % fileName)
             self.listCopiedFiles.append(fileName)
